@@ -17,19 +17,22 @@ class TPL {
     return "<a href=\"$target\"$icon class=\"ui-btn$pos ui-corner-all\">$text</a>\n";
   }
   
-  public static function button ($argsArray) {
-    $target = (isset($argsArray["target"]))? 'a href="'.$argsArray["target"].'"' : "span";
-    $tag = (isset($argsArray["target"]))? "a":"span";
-    $rel = (isset($argsArray["rel"]))? ' data-rel="'.$argsArray["rel"].'"':"";
-    $pos    = (isset($argsArray["position"]))? " ui-btn-".$argsArray["position"]:"";
-    $icon   = (isset($argsArray["icon"]))? ' ui-icon-'.$argsArray["icon"]: "";
-    $dicon   = (isset($argsArray["data-icon"]))? ' data-icon="'.$argsArray["data-icon"].'"': "";
-    $text   = (isset($argsArray["text"]))? $argsArray["text"]: "";
-    $notext = (isset($argsArray["notext"]))? " ui-btn-icon-notext":"";
-    $nodisc = (isset($argsArray["nodisc"]))? " ui-nodisc-icon":"";
-    $corners = (isset($argsArray["corners"]))? "":" ui-corner-all";
+  public static function button ($args) {
+    $tag = (isset($args["target"]))? "a":"span";
+    $target = (isset($args["target"]))? ' href="'.$args["target"].'"' : "";
+    $reversi = (isset($args["reverse"])||(isset($args["rel"])&&$args["rel"]=="back"));
+    $data  = (isset($args["rel"]))? ' data-rel="'.$args["rel"].'"':"";
+    $data  = ($reversi)?$data.' data-direction="reverse"':$data;
+    $data  = (isset($args["data-icon"]))? $data.' data-icon="'.$args["data-icon"].'"': $data;
+    $css = "ui-btn";
+    $css = (isset($args["icon"]))? $css.' ui-icon-'.$args["icon"]: $css;
+    $css = (isset($args["position"]))? $css." ui-btn-".$args["position"]:$css;
+    $css = (isset($args["notext"]))? $css." ui-btn-icon-notext": $css;
+    $css = (isset($args["nodisc"]))? $css." ui-nodisc-icon":$css;
+    $css = (isset($args["corners"]))? $css:$css." ui-corner-all";
+    $text   = (isset($args["text"]))? $args["text"]: "";
     
-    return "<$target$rel$dicon class=\"ui-btn $nodisc$pos$icon$notext$corners\">$text</$tag>\n";
+    return "<$tag$target$data class=\"$css\">$text</$tag>\n";
     
   }
   
@@ -54,17 +57,18 @@ END;
   
 }
 class list_obj {
-  private $list_type = "ul";
+  private $tag = "ul";
   private $list_html = "";
   private $spacer = "";
-  public function __CONSTRUCT($argsArray) {
-    $this->list_type = ("ol" == $argsArray["type"])? "ol" : "ul";
-    $this->spacer = (isset($argsArray["spacer"]))? $argsArray["spacer"]: '';
-    $inset = (isset($argsArray["inset"]))? ' data-inset="true"' : '';
-    $dividers = (isset($argsArray["dividers"]))? ' data-autodividers="true"': '';
-    $filter = (isset($argsArray["filter"]))? ' data-filter="true"': '';
-    $input  = (isset($argsArray["search"]))? ' data-input="#'.$argsArray["search"].'"':'';
-    $this->list_html .= "<".$this->list_type." data-role=\"listview\"$inset$dividers$filter$input>\n";
+  public function __CONSTRUCT($args) {
+    $this->spacer = (isset($args["spacer"]))? $args["spacer"]: '';
+    $this->tag = ("ol" == $args["type"])? "ol" : "ul";
+    $data = (isset($args["inset"]))? ' data-inset="'.$args["inset"].'"' : "";
+    $data = (isset($args["dividers"]))? $data.' data-autodividers="'.$args["dividers"].'"': $data;
+    $data = (isset($args["filter"]))? $data.' data-filter="true"': $data;
+    $data = (isset($args["search"]))? $data.' data-input="#'.$args["search"].'"':$data;
+    $data = (isset($args["collapse"]))? $data.' data-collapsed="'.$args["collapse"].'"':$data;
+    $this->list_html .= "<".$this->tag." data-role=\"listview\"$data>\n";
   }
   public function add_item () {
     $args = func_get_args();
@@ -73,11 +77,61 @@ class list_obj {
     $class = (reset($args))? ' class="'.reset($args).'"' : '';
     $this->list_html .= $this->spacer."  <li$class$isdivider>$content</li>\n";
   }
+  public function add_content ($content) {
+    $this->list_html .= $this->spacer."  $content\n";
+  }
   
-  public function list_close () {
-    $this->list_html .= $this->spacer."</".$this->list_type.">\n";
+  public function close () {
+    $this->list_html .= $this->spacer."</".$this->tag.">\n";
     return $this->list_html;
   }
+}
+
+class Card {
+  private $spacer = "";
+  private $card = "";
+  private $card_list = "";
+  private $card_list_open = false;
+  public function __CONSTRUCT($args) {
+    $title = (isset($args["title"]))? "<h4>".$args["title"]."</h4>" : "";
+    $data = (isset($args["role"]))? ' data-role="'.$args["role"].'"':"";
+    $data = (isset($args["c-icon"]))? $data.' data-collapsed-icon="'.$args["c-icon"].'"':$data;
+    $data = (isset($args["e-icon"]))? $data.' data-expanded-icon="'.$args["e-icon"].'"':$data;
+    $data = (isset($args["collapse"]))? $data.' data-collapsed="'.$args["collapse"].'"':$data;
+    
+    $this->spacer = (isset($args["spacer"]))? $args["spacer"]: '';
+    $this->card  = "<div$data>\n";
+	  $this->card .= $this->spacer."  ".$title."\n";
+  }
+  
+  public function add_content () {
+    $args = func_get_args();
+    $content = (reset($args))? array_shift($args) : '';
+    $this->card .= $this->spacer."  $content\n";
+  }
+  
+  public function close () {
+    $this->card .= $this->spacer."</div>\n";
+    return $this->card;
+  }
+  
+  public function add_list($args) {
+	  if ($this->card_list_open)
+		$this->close_list();
+	  $args["spacer"]=$this->spacer."  ";
+	  $this->card_list=new list_obj($args);
+  }
+  
+  public function add_item($args) {
+	  $this->card_list->add_item($args);
+  }
+  
+  public function close_list() {
+	  $this->card_list_open = false;
+	  $this->card.=$this->spacer."  ".$this->card_list->close();
+  }
+  
+  
 }
 
 class card_obj {

@@ -22,12 +22,14 @@
     "portal"   => array( "portals.php", "TAS.KOM Portal" ) ,
     "students" => array( "students.php", "TAS.KOM Students" ) ,
     "student"  => array( "students.php", "" ) ,
-    "form"  => array( "add.php", "" ) ,
-    "teacher"  => array( "teacher.php", "TAS.KOM Teachers" ) ,
+    "form"     => array( "add.php", "" ) ,
+    "routes"   => array( "routes.php",  "TAS.KOM Routes" ) ,
+    "route"    => array( "routes.php",  "" ) ,
     "rooms"    => array( "rooms.php",   "TAS.KOM Classrooms" ) ,
     "room"     => array( "rooms.php",   "" ) ,
-    "routes"   => array( "routes.php",  "TAS.KOM Routes" ) ,
-    "buswork"  => array( "buswork.php", "TAS.KOM Bus Workers" ) ,
+    "staff"    => array( "staff.php", "TAS.KOM Staff" ) ,
+    "teacher"  => array( "staff.php", "" ) ,
+    "buswrker" => array( "staff.php", "" ) ,
     "reports"  => array( "reports.php", "TAS.KOM Reports" ) ,
     "profile"  => array( "profile.php", "TAS.KOM Profile" ) ,
     "login"    => array( "login.php",   "TAS.KOM Login" )
@@ -40,5 +42,7 @@
   
 ?>
     </div>
+    <!-- TAS Mobile Attendance copyright 2016 -->
+    <!-- jQuery Mobile Copyright 2016: https://jquery.org/team/ -->
   </body>
 </html>

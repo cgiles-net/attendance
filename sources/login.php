@@ -30,7 +30,7 @@
   } else {
   
     $build_page .= <<<END
-<form action="" method="post">
+<form action="?view=portals" method="post">
           <label>UserName :</label>
           <input id="name" name="username" placeholder="username" type="text">
           <label>Password :</label>
