@@ -1,0 +1,49 @@
+
+.ui-page-theme-a .ui-btn:focus, html .ui-bar-a .ui-btn:focus, html .ui-body-a .ui-btn:focus, html body .ui-group-theme-a .ui-btn:focus, html head+body .ui-btn.ui-btn-a:focus, .ui-page-theme-a .ui-focus, html .ui-bar-a .ui-focus, html .ui-body-a .ui-focus, html body .ui-group-theme-a .ui-focus, html head+body .ui-btn-a.ui-focus, html head+body .ui-body-a.ui-focus {
+  -webkit-box-shadow: none;
+  -moz-box-shadow: none;
+  box-shadow: none;
+}
+a.ui-collapsible-heading-toggle.ui-btn.ui-btn-icon-left.ui-btn-inherit,
+.ui-page-theme-a .ui-li-divider.ui-bar-inherit, 
+header.ui-header.ui-bar-inherit {
+  background: #39d; color: #FFF; text-shadow: 0 1px 0 #080808;
+}
+.ui-page-theme-a .ui-btn.ui-btn-icon-notext {background: transparent; border: none;}
+.badge {
+  display: inline-block;
+  padding: 2px 9px 3px;
+  font-size: 12px;
+  line-height: 1;
+  color: #333;
+  background-color: rgba(0, 0, 0, .15);
+  border-radius: 100px;
+}
+.badge.badge-inverted {
+  padding: 0 5px 0 0;
+  background-color: transparent;
+}
+
+.badge-primary {
+  color: #fff;
+  background-color: #428bca;
+}
+.badge-primary.badge-inverted {
+  color: #428bca;
+}
+
+.badge-positive {
+  color: #fff;
+  background-color: #5cb85c;
+}
+.badge-positive.badge-inverted {
+  color: #5cb85c;
+}
+
+.badge-negative {
+  color: #fff;
+  background-color: #d9534f;
+}
+.badge-negative.badge-inverted {
+  color: #d9534f;
+}
