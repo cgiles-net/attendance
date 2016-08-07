@@ -1,6 +1,8 @@
 <?php
     require_once '../classes/meekrodb.2.3.class.php';
-    if ( isset($_REQUEST['type']) ) {
+    if ( isset($_REQUEST['type']) &&
+         isset($_REQUEST["submit"]) &&
+         isset($_SESSION["user"]) ) {
     
   switch($_REQUEST['type']){
     case "student":
@@ -23,11 +25,12 @@
       add_teacher();
       break;
     case "room":
-      add_room();
+      room();
     case "edit_room":
       edit_room();
       break;
     case "route";
+      route();
       break;
     default:
       header ("Location: http://".$_SERVER["SERVER_NAME"].":81/Attendance/");
@@ -44,13 +47,37 @@
         ));
         header ("Location: http://".$_SERVER["SERVER_NAME"].":81/Attendance/?view=teachers");
     }
-    function add_room() {
+    function route() {
+      $infoArray = array(
+        'route_id' => (isset($_REQUEST["route_id"]))?$_REQUEST["route_id"]:null,
+        'route_name'=>$_REQUEST["route_name"],
+        'route_captain'=>$_REQUEST["route_captain"],
+        'display_order'=>(isset($_REQUEST["display_order"]))?$_REQUEST["display_order"]:0
+      );
+      DB::insertUpdate("ss_routes",$infoArray);  
+      $route_id = DB::insertId();    
+      DB::query("UPDATE `ss_staff` SET `route_id` = '%i' WHERE `ss_staff`.`staff_id` = %i;",$route_id,$_REQUEST['route_captain']);
+      echo "Saved";
+    }
+    function room() {
+      $infoArray = array(
+        'room_id' => (isset($_REQUEST["room_id"]))?$_REQUEST["room_id"]:null,
+        'room_name'=>$_REQUEST["room_name"],
+        'room_captain'=>$_REQUEST["room_captain"],
+        'display_order'=>(isset($_REQUEST["display_order"]))?$_REQUEST["display_order"]:0
+      );
+      DB::insertUpdate("ss_rooms",$infoArray);
+      $room_id = DB::insertId();
+      DB::query("UPDATE `ss_staff` SET `room_id` = '%i' WHERE `ss_staff`.`staff_id` = %i;",$room_id,$_REQUEST['room_captain']);
+      echo "Saved";
+    }
+    /*function add_room() {
         DB::insert('ss_rooms', array(
             'room_name'    => $_REQUEST['room_name'],
             'room_captain' => $_REQUEST['room_captain']
         ));
     $room_id = DB::insertId();
-    DB::query("UPDATE `ss_staff` SET `room_id` = '%i' WHERE `ss_staff`.`teacher_id` = %i;",$room_id,$_REQUEST['room_captain']);
+    DB::query("UPDATE `ss_staff` SET `room_id` = '%i' WHERE `ss_staff`.`staff_id` = %i;",$room_id,$_REQUEST['room_captain']);
         header ("Location: http://".$_SERVER["SERVER_NAME"].":81/Attendance/?view=rooms");
     }
     function edit_room() {
@@ -59,9 +86,9 @@
             'room_name'    => $_REQUEST['room_name'],
             'room_captain' => $_REQUEST['room_captain']
         ));
-    DB::query("UPDATE `ss_staff` SET `room_id` = '%i' WHERE `ss_staff`.`teacher_id` = %i;",$_REQUEST['room_id'],$_REQUEST['room_captain']);
+    DB::query("UPDATE `ss_staff` SET `room_id` = '%i' WHERE `ss_staff`.`staff_id` = %i;",$_REQUEST['room_id'],$_REQUEST['room_captain']);
         header ("Location: http://".$_SERVER["SERVER_NAME"].":81/Attendance/view=room&id=".$_REQUEST['room_id']);
-    }
+    }*/
   function add_student() {
         DB::insert('ss_students', array(
       'last_name'  => $_REQUEST['last_name'],
@@ -155,7 +182,7 @@
   function add_note () {
     DB::insert("ss_student_notes",array(
       "student_id"=>$_REQUEST["student_id"],
-      "teacher_id"=>$_REQUEST["teacher_id"],
+      "staff_id"=>$_REQUEST["staff_id"],
       "note"=>$_REQUEST["note"]
     ));
   }

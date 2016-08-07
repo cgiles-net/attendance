@@ -8,5 +8,5 @@
   $ucp_nav->add_item("<a href='javascript:jQ.get(\"?view=login&act=2\",function(){window.location.replace(\"http://\"+window.location.host+window.location.pathname)});'>Log Out</a>");
 ?>
       <div data-role="panel" id="user_panel" data-display="overlay">
-        <?php echo $ucp_nav->list_close(); ?>
+        <?php echo $ucp_nav->close(); ?>
       </div><!-- /panel -->

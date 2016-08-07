@@ -5,13 +5,15 @@
 ?>
       <header data-role="header" data-position="fixed">
         <h1><?php echo $title; ?></h1>
-        <?php echo TPL::button(array(
-          "position"=>"left",
-          "icon"=>"carat-l",
-          "target"=>"#",
-          "rel"=>"back",
-          "notext"=>true
-        )); ?>
+        <?php 
+          echo TPL::button(array(
+            "position"=>"left",
+            "icon"=>"carat-l",
+            "target"=>(! isset($id))?"#":"?view=portals",
+            "rel"=>'back" data-transition="slidedown',
+            "notext"=>true
+          ));
+        ?>
       </header>
       <div data-role="main" data-theme="a">
         <form>
