@@ -11,7 +11,7 @@
   $portals_list->add_item("<a href='?view=rooms'>Classrooms</a>");
   $portals_list->add_item("<a href='?view=routes'>Routes</a>");
   $portals_list->add_item("<a href='?view=students'>Students</a>");
-  $portals_list->add_item("<a href='?view=Staff' class='ui-state-disabled'>Staff</a>");
+  $portals_list->add_item("<a href='?view=Staff'>Staff</a>");
   $build_page .= $portals_list->close();
   require_once("includes/user_panel.php");
   
