@@ -19,11 +19,11 @@
 
 class DB {
   // initial connection
-  public static $dbName = 'ss_attend';
-  public static $user = 'ss_attend';
-  public static $password = '';
-  public static $host = '192.168.1.2';
-  public static $port = null;
+  public static $dbName = 'attendance';
+  public static $user = 'root';
+  public static $password = 'password';
+  public static $host = '127.0.0.1';
+  public static $port = 3306;
   public static $encoding = 'latin1';
   
   // configure workings
