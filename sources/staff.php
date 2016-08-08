@@ -27,7 +27,7 @@
       foreach ($busworkers as $busworker){
         $busworker_name = $busworker["ss_staff.last_name"].", ".$busworker["ss_staff.first_name"];
         $staff_id = $busworker["ss_staff.staff_id"];
-        $staff_list->add_item("<a href=\"?view=busworker&id=$staff_id\">$busworker_name</a>");
+        $staff_list->add_item("<a href=\"?view=buswrker&id=$staff_id\">$busworker_name</a>");
       }
     }
     $staff_list->add_item("Unassigned",true);
@@ -43,8 +43,49 @@
   } else
     $id = (isset($_REQUEST["id"]))? $_REQUEST["id"] : $_SESSION["user"]["ss_staff.staff_id"];
   
-  /*profile*/
   
+  $hasAuth = (!!$_SESSION["user"]["ss_staff.approved"]);
+  /*profile*/
+  if (isset($id)&&!isset($_REQUEST["action"])) {
+    $profile = DB::queryFirstRow("select * from ss_staff where staff_id = %i",$id);
+    $hasAuth = ($_SESSION["user"]["ss_staff.staff_id"]==$id)?true:$hasAuth;
+    $profile_list = new list_obj(array(
+      "type"    =>"ul",
+      "inset"   =>true,
+      "spacer"  =>"        "
+    ));
+    $profile_list->add_item("Image",true);
+    if ($hasAuth) {
+      $profile_list->add_item("username",true);
+      $profile_list->add_item($profile["username"]);
+    }
+    $profile_list->add_item("Contact",true);
+    $profile_list->add_item("Phone: ".$profile["phone"]);
+    $profile_list->add_item("Email: ".$profile["email"]);
+    
+    $room_id = $profile["room_id"];
+    if ($room_id>0) {
+      $room_name = DB::queryFirstField("SELECT `room_name` FROM ss_rooms WHERE `room_id` = %i", $room_id);
+      $profile_list->add_item("Classroom",true);
+      $profile_list->add_item("<a href=\"?view=room&id=$room_id\">$room_name</a>");
+    }
+    $route_id = $profile["route_id"];
+    if ($route_id>0) {
+      $route_name = DB::queryFirstField("SELECT `route_name` FROM ss_routes WHERE `route_id` = %i", $route_id);
+      $profile_list->add_item("Route",true);
+      $profile_list->add_item("<a href=\"?view=route&id=$route_id\">$route_name</a>");
+    }
+    $build_page .= $profile_list->close();
+  }
+  
+  if (isset($_REQUEST["action"])) {
+    if ($_REQUEST["action"]=="edit") {
+      
+    }
+    if ($_REQUEST["action"]=="register") {
+      
+    }
+  }
   
   require_once("includes/user_panel.php");
 ?>
@@ -60,7 +101,7 @@
             "notext"=>true
           ));
         ?>
-        <?php if (isset($id)) if($hasAuth||intval($_SESSION["user"]["ss_staff.approved"])==1) echo TPL::old_button("right","gear","Edit","?view=room&id=$id#roomModal"); ?>
+        <?php if (isset($id)) if($hasAuth||intval($_SESSION["user"]["ss_staff.approved"])==1) echo TPL::old_button("right","gear","Edit","?view=staff&action=edit&id=$id"); else echo TPL::old_button("right","gear","Add","?view=staff&action=register&id=$id"); ?>
       </header>
       <div data-role="main" id="main" class="ui-content">
         <?php echo $build_page; ?>
