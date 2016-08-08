@@ -16,9 +16,10 @@
     $error = ( empty($_POST['username']) )? "Username or Password is invalid.":"";
     $username=$_POST['username'];
     $password=$_POST['password'];
-    $account = DB::queryFullColumns('SELECT * FROM ss_staff WHERE username=%s and password=%s',$username, md5($password));
-    /* if returned rows is greater than 0 */
-    if (count($account)<1) {
+    $account = DB::queryFullColumns('SELECT * FROM ss_staff WHERE username=%s LIMIT 1',$username);
+
+    /* if the given password does not match the password on file */
+    if (!password_verify($password, $account[0]['ss_staff.password'])) {
       $error = "Username or Password is invalid. line 22.";
     } else {
       $_SESSION['user'] = $account[0];
