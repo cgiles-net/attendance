@@ -25,11 +25,12 @@ class TPL {
     $data  = ($reversi)?$data.' data-direction="reverse"':$data;
     $data  = (isset($args["data-icon"]))? $data.' data-icon="'.$args["data-icon"].'"': $data;
     $css = "ui-btn";
-    $css = (isset($args["icon"]))? $css.' ui-icon-'.$args["icon"]: $css;
+    $css = (isset($args["corners"]))? $css:$css." ui-corner-all";
     $css = (isset($args["position"]))? $css." ui-btn-".$args["position"]:$css;
+    $css = (isset($args["icon"])&&!isset($args["icon-position"]))? $css.' ui-btn-icon-left':$css;
+    $css = (isset($args["icon"]))? $css.' ui-icon-'.$args["icon"]: $css;
     $css = (isset($args["notext"]))? $css." ui-btn-icon-notext": $css;
     $css = (isset($args["nodisc"]))? $css." ui-nodisc-icon":$css;
-    $css = (isset($args["corners"]))? $css:$css." ui-corner-all";
     $text   = (isset($args["text"]))? $args["text"]: "";
     
     return "<$tag$target$data class=\"$css\">$text</$tag>\n";
@@ -87,21 +88,61 @@ class list_obj {
   }
 }
 
+class Select_input {
+  private $options = "";
+  private $spacer = "";
+  private $newlines = "";
+  public function __CONSTRUCT($args) {
+    $this->spacer = (isset($args["spacer"]))? $args["spacer"]: '';
+    $this->newlines = (isset($args["spacer"])||isset($args["newlines"]))? '\n': '';
+    $attr = (isset($args["name"]))? ' name="'.$args["name"].'"' : '';
+    $attr = (isset($args["id"]))? ' name="'.$args["id"].'"' : $attr;
+    $this->options .= "<select$attr>".$this->newlines;
+  }
+  public function add_option ($name,$val) {
+    $args=func_get_args();
+    if (isset($args[2]))
+      $selected=" selected='selected'"
+    $value = " value='$val'";
+    $this->options .= $this->spacer."  <option$value>$name</option>".$this->newlines;
+  }
+  public function add_content ($content) {
+    $this->options .= $this->spacer."  $content".$this->newlines;
+  }
+  
+  public function close () {
+    $this->options .= $this->spacer."</select>".$this->newlines;
+    return $this->options;
+  }
+}
+
 class Card {
   private $spacer = "";
+  private $tag = "";
   private $card = "";
   private $card_list = "";
   private $card_list_open = false;
+  private $card_inner = "";
+  private $card_content_open = false;
   public function __CONSTRUCT($args) {
+    $tag = (isset($args["tag"]))? $args["tag"] : "div";
     $title = (isset($args["title"]))? "<h4>".$args["title"]."</h4>" : "";
     $data = (isset($args["role"]))? ' data-role="'.$args["role"].'"':"";
     $data = (isset($args["c-icon"]))? $data.' data-collapsed-icon="'.$args["c-icon"].'"':$data;
     $data = (isset($args["e-icon"]))? $data.' data-expanded-icon="'.$args["e-icon"].'"':$data;
     $data = (isset($args["collapse"]))? $data.' data-collapsed="'.$args["collapse"].'"':$data;
+    $data = (isset($args["id"]))? $data.' id="'.$args["id"].'"':$data;
+    $data = (isset($args["class"]))? $data.' class="'.$args["class"].'"':$data;
+    
+    if ($title!=""&&!isset($args["collapse"]))
+      $title="<div class='ui-bar ui-bar-a'>".$title."</div>";
     
     $this->spacer = (isset($args["spacer"]))? $args["spacer"]: '';
-    $this->card  = "<div$data>\n";
-	  $this->card .= $this->spacer."  ".$title."\n";
+    $this->card  = "<$tag$data>\n";
+    $this->tag = $tag;
+    if ($title!="")
+      $this->card .= $this->spacer."  ".$title."\n";
+    
   }
   
   public function add_content () {
@@ -110,20 +151,38 @@ class Card {
     $this->card .= $this->spacer."  $content\n";
   }
   
+  public function content ($content) {
+    $this->card .= $content;
+  }
+  
   public function close () {
-    $this->card .= $this->spacer."</div>\n";
+	  if ($this->card_list_open)
+      $this->close_list();
+    
+    $this->card .= $this->spacer."</".$this->tag.">\n";
     return $this->card;
   }
   
+  /* list functions */
   public function add_list($args) {
 	  if ($this->card_list_open)
-		$this->close_list();
+      $this->close_list();
 	  $args["spacer"]=$this->spacer."  ";
 	  $this->card_list=new list_obj($args);
+	  $this->card_list_open = true;
   }
   
-  public function add_item($args) {
-	  $this->card_list->add_item($args);
+  public function add_item() {
+    $args = func_get_args();
+    $content = (reset($args))? array_shift($args) : '';
+    if (array_shift($args))
+      $this->card_list->add_item($content,true);
+    else
+      $this->card_list->add_item($content);
+  }
+  
+  public function add_list_content($content) {
+    $this->card_list->add_content($content);
   }
   
   public function close_list() {

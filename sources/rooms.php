@@ -15,7 +15,7 @@
     $rooms_list->add_item("Classrooms",true);
     foreach ($rooms as $room_id){
       $room_name = DB::queryFirstField("SELECT `room_name` FROM ss_rooms WHERE `room_id` = $room_id");
-      $rooms_list->add_item("<a class=\"navigate-right\" href=\"?view=room&id=$room_id\"$dajax>$room_name</a>\n");
+      $rooms_list->add_item("<a href=\"?view=room&id=$room_id\"$dajax>$room_name</a>\n");
     }
     $build_page .= $rooms_list->close();
   }
@@ -93,7 +93,7 @@
   $formtitle = (isset($id))?"Edit Room":"Add Room";
   $savetext  = (isset($id))?"Edit Room":"Add Room";
   
-  $room_staff_select= "There are no busworkers,<br /> nominate staff to buswork first.";
+  $room_staff_select= "There are no Teachers,<br /> nominate staff to teaching first.";
   if (count($room_staff)>0) {
     $room_staff_select   = "\n            <select name='room_captain'>\n";
     $room_staff_select  .= "              <option value='-1'>No Captain</option>\n";
