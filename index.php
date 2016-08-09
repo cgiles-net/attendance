@@ -27,11 +27,12 @@
     "route"    => array( "routes.php",  "" ) ,
     "rooms"    => array( "rooms.php",   "TAS.KOM Classrooms" ) ,
     "room"     => array( "rooms.php",   "" ) ,
+    "Staff"    => array( "staff.php", "TAS.KOM Staff" ) ,
     "staff"    => array( "staff.php", "TAS.KOM Staff" ) ,
     "teacher"  => array( "staff.php", "" ) ,
     "buswrker" => array( "staff.php", "" ) ,
     "reports"  => array( "reports.php", "TAS.KOM Reports" ) ,
-    "profile"  => array( "profile.php", "TAS.KOM Profile" ) ,
+    "profile"  => array( "staff.php", "TAS.KOM Profile" ) ,
     "login"    => array( "login.php",   "TAS.KOM Login" )
   );
   

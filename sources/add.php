@@ -17,7 +17,7 @@
       </header>
       <div data-role="main" data-theme="a">
         <form>
-          <ul data-inset="true" data-role="listview">
+          <ul data-inset="false" data-role="listview">
             <!--<li data-role="list-divider"><h3>Add Student</h3></li>-->
             <li>
               <table>
