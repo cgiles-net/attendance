@@ -4,7 +4,7 @@
   $build_page="";
   
   /* list staff */
-  if (!isset($_REQUEST["id"])&&$view!="profile"&&!isset($_REQUEST["action"])) {
+  if (!isset($_GET["id"])&&$view!="profile"&&!isset($_GET["action"])) {
     $staff_list = new list_obj(array(
         "type"    =>"ul",
         "inset"   =>true,
@@ -40,12 +40,12 @@
       }
     }
     $build_page.=$staff_list->close();
-  } else if ($view=="profile"||isset($_REQUEST["id"]))
-    $id = (isset($_REQUEST["id"]))? $_REQUEST["id"] : $_SESSION["user"]["ss_staff.staff_id"];
+  } else if ($view=="profile"||isset($_GET["id"]))
+    $id = (isset($_GET["id"]))? intval($_GET["id"]) : $_SESSION["user"]["ss_staff.staff_id"];
   
   $hasAuth = (isset($id))? ($_SESSION["user"]["ss_staff.staff_id"]==$id||$_SESSION["user"]["ss_staff.approved"]) : ($_SESSION["user"]["ss_staff.approved"]);
   /*profile*/
-  if (isset($id)&&!isset($_REQUEST["action"])) {
+  if (isset($id)&&!isset($_GET["action"])) {
     $profile = DB::queryFirstRow("select * from ss_staff where staff_id = %i",$id);
     #$hasAuth = ($_SESSION["user"]["ss_staff.staff_id"]==$id)?true:$hasAuth;
     $room_id = (isset($profile["room_id"]))? $profile["room_id"] : -1;
@@ -82,8 +82,8 @@
     $build_page .= $profile_list->close();
   }
   
-  if (isset($_REQUEST["action"])) {
-    $act= $_REQUEST["action"];
+  if (isset($_GET["action"])) {
+    $act= $_GET["action"];
     if (!isset($id)) $id=0;
     $build_page .= build_form($act, $hasAuth, $id);
     $build_page .= "<script src='includes/staff.$act.js' type='text/css'></script>";
@@ -181,12 +181,12 @@
           echo TPL::button(array(
             "position"=>"left",
             "icon"=>"carat-l",
-            "target"=>(isset($id)||isset($_REQUEST["action"]))?"#":"?view=portals",
-            "rel"=>(isset($id)||isset($_REQUEST["action"]))?"back":null,
+            "target"=>(isset($id)||isset($_GET["action"]))?"#":"?view=portals",
+            "rel"=>(isset($id)||isset($_GET["action"]))?"back":null,
             "reverse"=>true,
             "notext"=>true
           ));
-          if (!isset($_REQUEST["action"]) && isset($id) && $hasAuth)
+          if (!isset($_GET["action"]) && isset($id) && $hasAuth)
             echo "        ".TPL::button(array(
                 "position"=>"right",
                 "text"=>"Edit",
@@ -194,7 +194,7 @@
                 "icon"=>"gear",
                 "target"=>"?view=staff&action=edit&id=$id"
               ));
-          else if ($hasAuth&&!isset($_REQUEST["action"]))
+          else if ($hasAuth&&!isset($_GET["action"]))
             echo "        ".TPL::button(array(
                 "position"=>"right",
                 "text"=>"Add",

@@ -14,8 +14,8 @@
   /*check if we've submitted data*/
   if ( isset($_POST['submit']) ) {
     $error = ( empty($_POST['username']) )? "Username or Password is invalid.":"";
-    $username=$_POST['username'];
-    $password=$_POST['password'];
+    $username=strip_tags($_POST['username']);
+    $password=strip_tags($_POST['password']);
     $account = DB::queryFullColumns('SELECT * FROM ss_staff WHERE username=%s LIMIT 1',$username);
     
     /* if the given password does not match the password on file */

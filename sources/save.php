@@ -1,6 +1,6 @@
 <?php
     require_once '../classes/meekrodb.2.3.class.php';
-    if ( isset($_REQUEST['type']) &&
+    if ( isset($_GET['type']) &&
          isset($_POST["submit"]) &&
          isset($_SESSION["user"]) ) {
     

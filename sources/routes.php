@@ -6,7 +6,7 @@
   
   $build_page = "";
   
-  if ( ! isset( $_REQUEST["id"] ) ) {
+  if ( empty( $_GET["id"] ) ) {
   $routes   = DB::queryFirstColumn("SELECT DISTINCT route_id FROM ss_routes");
   if ( count($routes)>=1 ) {
     $routes_list = new list_obj(array(
@@ -22,7 +22,7 @@
   if (intval($_SESSION["user"]["ss_staff.approved"])==1)
     $build_page .= "<a href=\"?view=route#routeModal\" class=\"ui-btn ui-corner-all ui-btn-icon-right ui-icon-plus\">Add a route?</a>";
   } else {
-    $id=$_REQUEST["id"];
+    $id=intval($_GET["id"]);
     $route_name = DB::queryFirstField("SELECT `route_name` FROM ss_routes WHERE `route_id` = %i", $id);
     $title.=$route_name;
     /* create the occupant list */
