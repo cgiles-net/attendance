@@ -1,7 +1,7 @@
 <?php
     require_once '../classes/meekrodb.2.3.class.php';
     if ( isset($_REQUEST['type']) &&
-         isset($_REQUEST["submit"]) &&
+         isset($_POST["submit"]) &&
          isset($_SESSION["user"]) ) {
     
   switch($_REQUEST['type']){
@@ -33,11 +33,11 @@
       route();
       break;
     default:
-      header ("Location: http://".$_SERVER["SERVER_NAME"].":81/Attendance/");
+      header ("Location: http://".$_SERVER["SERVER_NAME"].':'.$_SERVER['SERVER_PORT']"/Attendance/");
   }
 
     
-  } else header ("Location: http://".$_SERVER["SERVER_NAME"].":81/Attendance/");
+  } else header ("Location: http://".$_SERVER["SERVER_NAME"].':'.$_SERVER['SERVER_PORT']."/Attendance/");
     function add_teacher() {
         DB::insert('ss_staff', array(
             'first_name' => $_REQUEST['first_name'],
@@ -122,7 +122,7 @@
       'room_id'   => $_REQUEST['room_id'],
       'route_id'   => $_REQUEST['route_id']
     ));
-        header ("Location: http://".$_SERVER["SERVER_NAME"].":81/ss_attend/students.php");
+        header ("Location: http://".$_SERVER["SERVER_NAME"].":".$_SERVER["SERVER_PORT"]."/attendance/?view=students");
   }
   function update_student() {
     $updateArray =  array(
