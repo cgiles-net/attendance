@@ -6,7 +6,7 @@
   
   $build_page = "";
   
-  if ( ! isset( $_REQUEST["id"] ) ) {
+  if ( empty( $_GET["id"] ) ) {
   $rooms   = DB::queryFirstColumn("SELECT DISTINCT room_id FROM ss_rooms");
   if ( count($rooms)>=1 ) {
     $rooms_list = new list_obj(array(
@@ -22,7 +22,7 @@
   if (intval($_SESSION["user"]["ss_staff.approved"])==1)
     $build_page .= "<a href=\"?view=room#roomModal\" class=\"ui-btn ui-corner-all ui-btn-icon-right ui-icon-plus\">Add a Room?</a>";
   } else {
-    $id=$_REQUEST["id"];
+    $id=intval($_GET["id"]);
     $room_name = DB::queryFirstField("SELECT `room_name` FROM ss_rooms WHERE `room_id` = %i", $id);
     $title.=$room_name;
     /* create the occupant list */

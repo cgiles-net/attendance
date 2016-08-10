@@ -10,7 +10,7 @@
   
   session_start();
   /* view=something&id=number */
-  $view = ( isset( $_SESSION['user'] ) )? ( isset( $_REQUEST["view"] ) )? $_REQUEST["view"] : "portals" : "login";
+  $view = ( isset( $_SESSION['user'] ) )? ( isset( $_GET["view"] ) )? $_GET["view"] : "portals" : "login";
   
   $iPod   = strpos($_SERVER['HTTP_USER_AGENT'],"iPod");
   $iPhone = strpos($_SERVER['HTTP_USER_AGENT'],"iPhone");

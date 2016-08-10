@@ -4,11 +4,11 @@
   $this_sunday = date('Y-m-d', strtotime('sunday this week'));
   /* get the date of sunday this working week */
   
-  if (isset($_REQUEST['id'])) {
+  if (isset($_GET['id'])) {
   
-    $id=(isset($_REQUEST["id"]))?$_REQUEST["id"]:0;
+    $id=(isset($_GET["id"]))?intval($_GET["id"]):0;
     /* Get current student from database */
-    $student = DB::queryFullColumns("select * from ss_students where student_id=%i",$_REQUEST["id"]);
+    $student = DB::queryFullColumns("select * from ss_students where student_id=%i",$id);
     /* die if no student */
     if (count($student)==0) { echo "no such student"; die; }
     $student = $student[0]; /* reassign array */

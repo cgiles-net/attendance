@@ -4,7 +4,7 @@
   $build_page="";
   
   /* list staff */
-  if (!isset($_REQUEST["id"])&&$view!="profile"&&!isset($_REQUEST["action"])) {
+  if (!isset($_GET["id"])&&$view!="profile"&&!isset($_GET["action"])) {
     $staff_list = new list_obj(array(
         "type"    =>"ul",
         "inset"   =>true,
@@ -40,12 +40,12 @@
       }
     }
     $build_page.=$staff_list->close();
-  } else if ($view=="profile"||isset($_REQUEST["id"]))
-    $id = (isset($_REQUEST["id"]))? $_REQUEST["id"] : $_SESSION["user"]["ss_staff.staff_id"];
+  } else if ($view=="profile"||isset($_GET["id"]))
+    $id = (isset($_GET["id"]))? intval($_GET["id"]) : $_SESSION["user"]["ss_staff.staff_id"];
   
   $hasAuth = (isset($id))? ($_SESSION["user"]["ss_staff.staff_id"]==$id||$_SESSION["user"]["ss_staff.approved"]) : ($_SESSION["user"]["ss_staff.approved"]);
   /*profile*/
-  if (isset($id)&&!isset($_REQUEST["action"])) {
+  if (isset($id)&&!isset($_GET["action"])) {
     $profile = DB::queryFirstRow("select * from ss_staff where staff_id = %i",$id);
     #$hasAuth = ($_SESSION["user"]["ss_staff.staff_id"]==$id)?true:$hasAuth;
     $room_id = (isset($profile["room_id"]))? $profile["room_id"] : -1;
@@ -82,11 +82,11 @@
     $build_page .= $profile_list->close();
   }
   
-  if (isset($_REQUEST["action"])) {
-    $act= $_REQUEST["action"];
+  if (isset($_GET["action"])) {
+    $act= $_GET["action"];
     if (!isset($id)) $id=0;
     $build_page .= build_form($act, $hasAuth, $id);
-    
+    $build_page .= "<script src='includes/staff.$act.js' type='text/css'></script>";
     #password_hash($password, PASSWORD_BCRYPT);
   }
   function build_form($act,$hasAuth,$id) {
@@ -114,10 +114,9 @@
         break;
     }
     
-    $route_input =new Select_input(array("name"=>"routes"));
     $routes   = DB::queryFullColumns("SELECT DISTINCT * FROM ss_routes");
     if ( count($routes)>=1 ) {
-      $route_input =new Select_input(array("name"=>"routes"));
+      $route_input =new Select_input(array("name"=>"routes","disabled"=>($busworker=="")?" disabled='disabled'":"","spacer"=>"                  "));
       $route_input->add_option("Not assigned",0);
       foreach ($routes as $route){
         $route_name = $route["ss_routes.route_name"];
@@ -130,10 +129,9 @@
     } else
       $routes  ="<a href=\"?view=routes#routeModal\" class=\"ui-btn ui-corner-all ui-btn-icon-right ui-icon-plus\">Add a Route?</a>";
     
-    $rooms_input =new Select_input(array("name"=>"rooms"));
     $rooms   = DB::queryFullColumns("SELECT DISTINCT * FROM ss_rooms");
     if ( count($rooms)>=1 ) {
-      $rooms_input =new Select_input(array("name"=>"rooms"));
+      $rooms_input =new Select_input(array("name"=>"rooms","disabled"=>($teacher=="")?" disabled='disabled'":"","spacer"=>"                  "));
       $rooms_input->add_option("Not assigned",0);
       foreach ($rooms as $room){
         $room_name = $room["ss_rooms.room_name"];
@@ -159,9 +157,20 @@
     $fields->add_item("Contact",true);
     $fields->add_item("<table width='100%'><tr><td width='25em'><label for='email'>Email:</label></td><td><input type='email' value='$email' name='email' /></td></tr><tr><td><label for='phone'>Phone:</label></td><td><input type='text' value='$phone' name='phone' /></td></tr></table>");
     $fields->add_item("Assignment / Role",true);
-    $fields->add_item("<fieldset data-role='controlgroup' data-type='horizontal'><input name='busroute' id='busroute' type='checkbox'$busworker><label for='busroute'>Bus Worker</label>$routes<input name='teacher' id='teacher' type='checkbox'$teacher><label for='teacher'>Teacher</label>$rooms$admin</fieldset>");
-    
-    
+    $fields->add_item("
+                <fieldset data-role='controlgroup' data-type='horizontal'>
+                  <input name='busroute' id='busroute' type='checkbox'$busworker>
+                  <label for='busroute'>Bus Worker</label>
+                  $routes
+                </fieldset>
+              ");
+    $fields->add_item("
+                <fieldset data-role='controlgroup' data-type='horizontal'>
+                  <input name='teacher' id='teacher' type='checkbox'$teacher>
+                  <label for='teacher'>Teacher</label>
+                  $rooms
+                </fieldset>
+              ");
     return $fields->close();
   }
   require_once("includes/user_panel.php");
@@ -172,12 +181,12 @@
           echo TPL::button(array(
             "position"=>"left",
             "icon"=>"carat-l",
-            "target"=>(isset($id)||isset($_REQUEST["action"]))?"#":"?view=portals",
-            "rel"=>(isset($id)||isset($_REQUEST["action"]))?"back":null,
+            "target"=>(isset($id)||isset($_GET["action"]))?"#":"?view=portals",
+            "rel"=>(isset($id)||isset($_GET["action"]))?"back":null,
             "reverse"=>true,
             "notext"=>true
           ));
-          if (!isset($_REQUEST["action"]) && isset($id) && $hasAuth)
+          if (!isset($_GET["action"]) && isset($id) && $hasAuth)
             echo "        ".TPL::button(array(
                 "position"=>"right",
                 "text"=>"Edit",
@@ -185,7 +194,7 @@
                 "icon"=>"gear",
                 "target"=>"?view=staff&action=edit&id=$id"
               ));
-          else if ($hasAuth&&!isset($_REQUEST["action"]))
+          else if ($hasAuth&&!isset($_GET["action"]))
             echo "        ".TPL::button(array(
                 "position"=>"right",
                 "text"=>"Add",
