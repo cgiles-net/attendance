@@ -1,4 +1,13 @@
 <?php
+  // Display PHP Errors
+  error_reporting(E_ALL | E_STRICT);
+  ini_set('display_errors', 'On');
+
+  // If php does not have bcrypt hashing installed or enabled, add the password compatability library
+  if(!function_exists('password_hash')) {
+    require("password.php");
+    }
+
   require_once( "classes/" . "meekrodb.2.3.class.php" );
   require_once( "classes/" . "tpl.class.php" );
   

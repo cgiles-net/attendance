@@ -102,7 +102,7 @@ class Select_input {
   public function add_option ($name,$val) {
     $args=func_get_args();
     if (isset($args[2]))
-      $selected=" selected='selected'"
+      $selected=" selected='selected'";
     $value = " value='$val'";
     $this->options .= $this->spacer."  <option$value>$name</option>".$this->newlines;
   }
