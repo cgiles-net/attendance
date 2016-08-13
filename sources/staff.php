@@ -59,8 +59,6 @@
       "spacer"  =>"        "
     ));
     $profile_list->add_item("Image",true);
-    $profile_list->add_item("Name",true);
-    $profile_list->add_item($profile["first_name"]." ".$profile["last_name"]);
     if ($hasAuth) {
       $profile_list->add_item("username",true);
       $profile_list->add_item($profile["username"]);
@@ -84,41 +82,14 @@
     $build_page .= $profile_list->close();
   }
   
-  if (isset($_GET["action"])&&$hasAuth) {
-    $errors = "";
-    
-    $act=strip_tags($_GET["action"]);
+  if (isset($_GET["action"])) {
+    $act= $_GET["action"];
     if (!isset($id)) $id=0;
-    if (isset($_POST['submit'])) {
-      $results=validate_form($act,$hasAuth,$id,$errors);
-      $errors=$results["errors"];
-      if ($errors=="") {
-        save_form($act,$results);
-      }
-    }
-    $build_page .= build_form($act, $hasAuth, $id, $errors);
-    if ($act=="edit")
-      $build_page .= "<script src='includes/staff.edit.js' type='text/css'></script>";
-    if ($act=="register")
-      $build_page .= "<script src='includes/staff.register.js' type='text/css'></script>";
+    $build_page .= build_form($act, $hasAuth, $id);
+    $build_page .= "<script src='includes/staff.$act.js' type='text/css'></script>";
     #password_hash($password, PASSWORD_BCRYPT);
   }
-  
-  function validate_form ($act,$hasAuth,$id,$error) {
-    //do stuff//
-    $_POST["username"];
-    $_POST["password"];
-    $_POST["password2"];
-    $_POST["first_name"];
-    $_POST["last_name"];
-    $_POST["email"];
-    $_POST["phone"];
-    $_POST["routes"];
-    $_POST["rooms"];
-    return "errors";
-  }
-  
-  function build_form($act,$hasAuth,$id,$error) {
+  function build_form($act,$hasAuth,$id) {
     if (!$hasAuth)
       return "invalid action";
     $username = ""; $first_name = ""; $last_name = ""; $email = ""; $phone = ""; $admin = ""; $busworker = ""; $teacher = ""; $room_id = ""; $route_id = "";
@@ -145,9 +116,8 @@
     
     $routes   = DB::queryFullColumns("SELECT DISTINCT * FROM ss_routes");
     if ( count($routes)>=1 ) {
-      $route_input =new Select_input(array("name"=>"routes","spacer"=>"                  "));
-      $route_input->add_option("Not a busworker",-1);
-      $route_input->add_option("Buswork",0);
+      $route_input =new Select_input(array("name"=>"routes","disabled"=>($busworker=="")?" disabled='disabled'":"","spacer"=>"                  "));
+      $route_input->add_option("Not assigned",0);
       foreach ($routes as $route){
         $route_name = $route["ss_routes.route_name"];
         if ($route_id==$route["ss_routes.route_id"])
@@ -161,9 +131,8 @@
     
     $rooms   = DB::queryFullColumns("SELECT DISTINCT * FROM ss_rooms");
     if ( count($rooms)>=1 ) {
-      $rooms_input =new Select_input(array("name"=>"rooms","spacer"=>"                  "));
-      $rooms_input->add_option("Not a Teacher",-1);
-      $rooms_input->add_option("Teacher",0);
+      $rooms_input =new Select_input(array("name"=>"rooms","disabled"=>($teacher=="")?" disabled='disabled'":"","spacer"=>"                  "));
+      $rooms_input->add_option("Not assigned",0);
       foreach ($rooms as $room){
         $room_name = $room["ss_rooms.room_name"];
         if ($room_id==$room["ss_rooms.room_id"])
@@ -179,8 +148,6 @@
       "tag"=>"form",
       "spacer"  =>"          ",
       "id" => "staff",
-      "method" => "post",
-      "action" => ""
     ));
     $fields->add_list(array("type"=>"ul","inset"=>"true"));
     $fields->add_item("Account",true);
@@ -190,22 +157,20 @@
     $fields->add_item("Contact",true);
     $fields->add_item("<table width='100%'><tr><td width='25em'><label for='email'>Email:</label></td><td><input type='email' value='$email' name='email' /></td></tr><tr><td><label for='phone'>Phone:</label></td><td><input type='text' value='$phone' name='phone' /></td></tr></table>");
     $fields->add_item("Assignment / Role",true);
-    $fields->add_item($routes);
-    $fields->add_item($rooms);
-    /*$fields->add_item("
+    $fields->add_item("
                 <fieldset data-role='controlgroup' data-type='horizontal'>
-                  <input name='busroute' id='busroute' type='checkbox' value='0'$busworker>
+                  <input name='busroute' id='busroute' type='checkbox'$busworker>
                   <label for='busroute'>Bus Worker</label>
                   $routes
                 </fieldset>
               ");
     $fields->add_item("
                 <fieldset data-role='controlgroup' data-type='horizontal'>
-                  <input name='teacher' id='teacher' type='checkbox' value='0'$teacher>
+                  <input name='teacher' id='teacher' type='checkbox'$teacher>
                   <label for='teacher'>Teacher</label>
                   $rooms
                 </fieldset>
-              ");*/
+              ");
     return $fields->close();
   }
   require_once("includes/user_panel.php");

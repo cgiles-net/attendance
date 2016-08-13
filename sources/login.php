@@ -19,7 +19,7 @@
     $account = DB::queryFullColumns('SELECT * FROM ss_staff WHERE username=%s LIMIT 1',$username);
     
     /* if the given password does not match the password on file */
-    if (count($account)<1||!password_verify($password, $account[0]['ss_staff.password'])) {
+    if (!password_verify($password, $account[0]['ss_staff.password'])) {
       $error = "Username or Password is invalid. line 22.";
     } else {
       $_SESSION['user'] = $account[0];

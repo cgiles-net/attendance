@@ -94,24 +94,24 @@ class Select_input {
   private $newlines = "";
   public function __CONSTRUCT($args) {
     $this->spacer = (isset($args["spacer"]))? $args["spacer"]: '';
-    $this->newlines = (isset($args["spacer"])||isset($args["newlines"]))? "\n": '';
+    $this->newlines = (isset($args["spacer"])||isset($args["newlines"]))? '\n': '';
     $attr = (isset($args["name"]))? ' name="'.$args["name"].'"' : '';
-    $attr = (isset($args["id"]))? $attr.' id="'.$args["id"].'"' : $attr;
-    $attr = (isset($args["disabled"]))? $attr.$args["disabled"]:$attr;
+    $attr = (isset($args["id"]))? ' name="'.$args["id"].'"' : $attr;
     $this->options .= "<select$attr>".$this->newlines;
   }
   public function add_option ($name,$val) {
     $args=func_get_args();
-    $selected = (isset($args[2]))? " selected='selected'": "";
+    if (isset($args[2]))
+      $selected=" selected='selected'"
     $value = " value='$val'";
-    $this->options .= $this->spacer."  <option$value$selected>$name</option>".$this->newlines;
+    $this->options .= $this->spacer."  <option$value>$name</option>".$this->newlines;
   }
   public function add_content ($content) {
     $this->options .= $this->spacer."  $content".$this->newlines;
   }
   
   public function close () {
-    $this->options .= $this->spacer."</select>";
+    $this->options .= $this->spacer."</select>".$this->newlines;
     return $this->options;
   }
 }
@@ -133,8 +133,6 @@ class Card {
     $data = (isset($args["collapse"]))? $data.' data-collapsed="'.$args["collapse"].'"':$data;
     $data = (isset($args["id"]))? $data.' id="'.$args["id"].'"':$data;
     $data = (isset($args["class"]))? $data.' class="'.$args["class"].'"':$data;
-    $data = (!empty($args["action"]))? $data.' action="'.$args["action"].'"':$data;
-    $data = (!empty($args["method"]))? $data.' method="'.$args["method"].'"':$data;
     
     if ($title!=""&&!isset($args["collapse"]))
       $title="<div class='ui-bar ui-bar-a'>".$title."</div>";
